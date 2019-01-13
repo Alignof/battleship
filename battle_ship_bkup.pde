@@ -15,7 +15,7 @@ PImage bg,cr,op,se,su,ba;
 
 Direction_Button[]      dirB=new Direction_Button[4];
 Num_Button[]            numB=new Num_Button[3];
-Ship[]                    ship=new Ship[3];
+Ship[]                  ship=new Ship[3];
 Circle_Button  		Next,Attack,Select;
 
 int[] grid_x={145,215,285,355,425};
