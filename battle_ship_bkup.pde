@@ -127,69 +127,21 @@ void mousePressed(){
                 phase++;
         }else if(Select.overCircle()){
                 if(phase==1){
-                        switch(ship_type){
-                                case 0:
-                                        ship[0].x=tmp_x;
-                                        ship[0].y=tmp_y;
-                                        break;
-                                case 1:
-                                        ship[1].x=tmp_x;
-                                        ship[1].y=tmp_y;
-                                        break;
-                                case 2:
-                                        ship[2].x=tmp_x;
-                                        ship[2].y=tmp_y;
-                                        break;
-                        }        
+                        ship[ship_type].x=tmp_x;
+                        ship[ship_type].y=tmp_y;
                 }else if(phase==2){
-                        switch(ship_type){
-                                case 0:
-                                        ship[0].move(direction,n);
-                                        break;
-                                case 1:
-                                        ship[1].move(direction,n);
-                                        break;
-                                case 2:
-                                        ship[2].move(direction,n);
-                                        break;
-                        } 
+                        ship[ship_type].move(direction,n);
                 }
         }else if(Attack.overCircle()){
-                switch(ship_type){
-                        case 0:
-                                if(ship[0].around(tmp_x,tmp_y)&&n<=ship[0].atk){
-                                        println("ship[0]");
-                                        OscMessage Attack_msg=new OscMessage("/Check/Attack");
-                                        Attack_msg.add(tmp_x);
-                                        Attack_msg.add(tmp_y);
-                                        Attack_msg.add(ship[0].atk);
-                                        oscP5.send(Attack_msg,myRemoteLocation);
-                                        update();
-                                }
-                                break;
-                        case 1:
-                                if(ship[1].around(tmp_x,tmp_y)&&n<=ship[1].atk){
-                                        //Attack
-                                        OscMessage Attack_msg=new OscMessage("/Check/Attack");
-                                        Attack_msg.add(tmp_x);
-                                        Attack_msg.add(tmp_y);
-                                        Attack_msg.add(ship[1].atk);
-                                        oscP5.send(Attack_msg,myRemoteLocation);
-                                        update();
-                                }
-                                break;
-                        case 2:
-                                if(ship[2].around(tmp_x,tmp_y)&&n<=ship[2].atk){
-                                        //Attack
-                                        OscMessage Attack_msg=new OscMessage("/Check/Attack");
-                                        Attack_msg.add(tmp_x);
-                                        Attack_msg.add(tmp_y);
-                                        Attack_msg.add(ship[2].atk);
-                                        oscP5.send(Attack_msg,myRemoteLocation);
-                                        update();
-                                }
-                                break;
-                } 
+                if(ship[ship_type].around(tmp_x,tmp_y)&&n<=ship[ship_type].atk){
+                        println("ship[ship_type]");
+                        OscMessage Attack_msg=new OscMessage("/Check/Attack");
+                        Attack_msg.add(tmp_x);
+                        Attack_msg.add(tmp_y);
+                        Attack_msg.add(ship[ship_type].atk);
+                        oscP5.send(Attack_msg,myRemoteLocation);
+                        update();
+                }
         }
   
         for(int i=0;i<4;i++){
@@ -221,40 +173,22 @@ void mousePressed(){
 public void check_Attack(int x, int y,int atk) {
         println(x+","+y);
         println("atk>>"+atk);
-        if(ship[0].hit(x,y)){
-                OscMessage Return_atk=new OscMessage("/Return/Attack");
-                if(atk<ship[0].HP){
-                        Return_atk.add(2);
-                        oscP5.send(Return_atk,myRemoteLocation);
-                }else{
-                        Return_atk.add(3);
-                        oscP5.send(Return_atk,myRemoteLocation);
-                        ship[0].alive=false;
-                }
-                ship[0].HP-=atk;
-        }else if(ship[1].hit(x,y)){
-                OscMessage Return_atk=new OscMessage("/Return/Attack");
-                if(atk<ship[1].HP){
+        
+        for(int i=0;i<3;i++){
+                if(ship[i].hit(x,y)){
+                        OscMessage Return_atk=new OscMessage("/Return/Attack");
+                        if(atk<ship[i].HP){
                                 Return_atk.add(2);
-                        oscP5.send(Return_atk,myRemoteLocation);
-                }else{
-                        Return_atk.add(3);
-                        oscP5.send(Return_atk,myRemoteLocation);
-                        ship[1].alive=false;
+                                oscP5.send(Return_atk,myRemoteLocation);
+                        }else{
+                                Return_atk.add(3);
+                                oscP5.send(Return_atk,myRemoteLocation);
+                                ship[i].alive=false;
+                        }
+                        ship[i].HP-=atk;
                 }
-                ship[1].HP-=atk;
-        }else if(ship[2].hit(x,y)){
-                OscMessage Return_atk=new OscMessage("/Return/Attack");
-                if(atk<ship[2].HP){
-                        Return_atk.add(2);
-                        oscP5.send(Return_atk,myRemoteLocation);
-                }else{
-                        Return_atk.add(3);
-                        oscP5.send(Return_atk,myRemoteLocation);
-                        ship[2].alive=false;
-                }
-                ship[2].HP-=atk;
-        }else if(ship[0].around(x,y)||ship[1].around(x,y)||ship[2].around(x,y)){
+        }
+        if(ship[0].around(x,y)||ship[1].around(x,y)||ship[2].around(x,y)){
                 OscMessage Return_atk=new OscMessage("/Return/Attack");
                 Return_atk.add(1);
                 oscP5.send(Return_atk,myRemoteLocation);
