@@ -47,6 +47,7 @@ void setup(){
         oscP5.plug(this,"check_Move","/Check/Move");
         oscP5.plug(this,"disp_Result","/Return/Attack");
         oscP5.plug(this,"set_turn","/Turn/first");
+        oscP5.plug(this,"turn_check","/Turn/your");
         myRemoteLocation = new NetAddress("127.0.0.1", 4321);//IPaddress
 
         Next=new Circle_Button(1000,600,100,color(255,255,0),color(255,255,100));
@@ -121,7 +122,6 @@ void mousePressed(){
                 if(phase==0){
                         if(Turn==0){
                                 OscMessage Im_first=new OscMessage("/Turn/first");
-                                Attack_msg.add(1);
                                 oscP5.send(Im_first,myRemoteLocation);
                                 My_turn=true;
                         }
@@ -138,16 +138,20 @@ void mousePressed(){
                         ship[ship_type].x=tmp_x;
                         ship[ship_type].y=tmp_y;
                 }else if(phase==2){
-                        ship[ship_type].move(direction,n);
+                        if(My_turn){
+                                ship[ship_type].move(direction,n);
+                        }
                 }
         }else if(Attack.overCircle()){
-                if(ship[ship_type].around(tmp_x,tmp_y)&&n<=ship[ship_type].atk){
-                        OscMessage Attack_msg=new OscMessage("/Check/Attack");
-                        Attack_msg.add(tmp_x);
-                        Attack_msg.add(tmp_y);
-                        Attack_msg.add(ship[ship_type].atk);
-                        oscP5.send(Attack_msg,myRemoteLocation);
-                        update();
+                if(My_turn){
+                        if(ship[ship_type].around(tmp_x,tmp_y)&&n<=ship[ship_type].atk){
+                                OscMessage Attack_msg=new OscMessage("/Check/Attack");
+                                Attack_msg.add(tmp_x);
+                                Attack_msg.add(tmp_y);
+                                Attack_msg.add(ship[ship_type].atk);
+                                oscP5.send(Attack_msg,myRemoteLocation);
+                                update();
+                        }
                 }
         }
   
@@ -211,7 +215,11 @@ public void disp_Result(int result){
         println(result_word[result]);
 }
 
-public void set_turn(int result){
+public void turn_check(){
+        My_turn=true;
+}
+
+public void set_turn(){
         My_turn=false;
 }
 
@@ -222,6 +230,9 @@ public void check_Move(int type,int direction){
 void update(){
         Turn++;
         Info.setText("Turn:"+Turn+"\n");
+        OscMessage Your_turn=new OscMessage("/Turn/your");
+        oscP5.send(Your_turn,myRemoteLocation);
+        My_turn=false;
 }
 
 void this_true(int direction){
