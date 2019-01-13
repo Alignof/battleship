@@ -221,6 +221,7 @@ public void turn_check(){
 
 public void set_turn(){
         My_turn=false;
+        Turn=1;
 }
 
 public void check_Move(int type,int direction){
