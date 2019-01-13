@@ -18,6 +18,7 @@ Num_Button[]            numB=new Num_Button[3];
 Ship[]                  ship=new Ship[3];
 Circle_Button  		Next,Attack,Select;
 
+boolean My_turn;
 int[] grid_x={145,215,285,355,425};
 int[] grid_y={118,188,258,328,398};
 int ship_type;
@@ -25,7 +26,7 @@ int direction;
 int n;
 int tmp_x;
 int tmp_y;
-int turn=1;
+int Turn=0;
 int phase=0;
 int myCurrentIndex = 0;
 String[] tokens;
@@ -45,6 +46,7 @@ void setup(){
         oscP5.plug(this,"check_Attack","/Check/Attack");
         oscP5.plug(this,"check_Move","/Check/Move");
         oscP5.plug(this,"disp_Result","/Return/Attack");
+        oscP5.plug(this,"set_turn","/Turn/first");
         myRemoteLocation = new NetAddress("127.0.0.1", 4321);//IPaddress
 
         Next=new Circle_Button(1000,600,100,color(255,255,0),color(255,255,100));
@@ -117,6 +119,12 @@ void draw(){
 void mousePressed(){
         if(Next.overCircle()){
                 if(phase==0){
+                        if(Turn==0){
+                                OscMessage Im_first=new OscMessage("/Turn/first");
+                                Attack_msg.add(1);
+                                oscP5.send(Im_first,myRemoteLocation);
+                                My_turn=true;
+                        }
                         Set_textbox();
                 }
                 if(phase==1){
@@ -134,7 +142,6 @@ void mousePressed(){
                 }
         }else if(Attack.overCircle()){
                 if(ship[ship_type].around(tmp_x,tmp_y)&&n<=ship[ship_type].atk){
-                        println("ship[ship_type]");
                         OscMessage Attack_msg=new OscMessage("/Check/Attack");
                         Attack_msg.add(tmp_x);
                         Attack_msg.add(tmp_y);
@@ -204,13 +211,17 @@ public void disp_Result(int result){
         println(result_word[result]);
 }
 
+public void set_turn(int result){
+        My_turn=false;
+}
+
 public void check_Move(int type,int direction){
         println(tokens[type]+">>"+direction_word[direction]);
 }
 
 void update(){
-        turn++;
-        Info.setText("Turn:"+turn+"\n");
+        Turn++;
+        Info.setText("Turn:"+Turn+"\n");
 }
 
 void this_true(int direction){
@@ -329,7 +340,7 @@ void Set_textarea(){
                 .setColorForeground(color(255,100));
         ;
 
-        Info.setText("Turn:"+turn+"\n");
+        Info.setText("Turn:"+Turn+"\n");
 }
 
 void Set_ship(){
