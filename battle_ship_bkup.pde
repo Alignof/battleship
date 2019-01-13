@@ -13,10 +13,10 @@ Textarea myTextarea,Info;
 
 PImage bg,cr,op,se,su,ba;
 
-Direction_Button[]      dirB=new Direction_Button[4];
-Num_Button[]            numB=new Num_Button[3];
-Ship[]                    ship=new Ship[3];
+Direction_Button 	Up,Down,Right,Left;
+Num_Button  		One,Two,Three;
 Circle_Button  		Next,Attack,Select;
+Ship    		Submarine,Cruiser,Battleship;
 
 int[] grid_x={145,215,285,355,425};
 int[] grid_y={118,188,258,328,398};
@@ -51,14 +51,14 @@ void setup(){
         Attack=new Circle_Button(900,600,100,color(255,0,0),color(255,100,100));
         Select=new Circle_Button(1000,480,100,color(0,255,0),color(100,255,100));
 
-        dirB[0]=new Direction_Button(660,350,40,110,color(255,255,0),color(255,255,100),color(127,127,0));
-        dirB[1]=new Direction_Button(dirB[0].x , (dirB[0].y + dirB[0].rect_x + dirB[0].rect_y) , dirB[0].rect_x , dirB[0].rect_y ,dirB[0].col_select,dirB[0].col_over,dirB[0].col);
-        dirB[2]=new Direction_Button(dirB[0].x+dirB[0].rect_x , dirB[0].y+dirB[0].rect_y , dirB[0].rect_y , dirB[0].rect_x ,dirB[0].col_select,dirB[0].col_over,dirB[0].col);
-        dirB[3]=new Direction_Button(dirB[0].x-dirB[0].rect_y , dirB[2].y , dirB[0].rect_y , dirB[0].rect_x ,dirB[0].col_select,dirB[0].col_over,dirB[0].col);
+        Up=new Direction_Button(660,350,40,110,color(255,255,0),color(255,255,100),color(127,127,0));
+        Down=new Direction_Button(Up.x , (Up.y + Up.rect_x + Up.rect_y) , Up.rect_x , Up.rect_y ,Up.col_select,Up.col_over,Up.col);
+        Right=new Direction_Button(Up.x+Up.rect_x , Up.y+Up.rect_y , Up.rect_y , Up.rect_x ,Up.col_select,Up.col_over,Up.col);
+        Left=new Direction_Button(Up.x-Up.rect_y , Right.y , Up.rect_y , Up.rect_x ,Up.col_select,Up.col_over,Up.col);
 
-        numB[0]=new Num_Button(480,500,50,40,color(255,0,255),color(255,100,255),color(127,0,127));
-        numB[1]=new Num_Button(480,545,100,40,color(255,0,255),color(255,100,255),color(127,0,127));
-        numB[2]=new Num_Button(480,590,150,40,color(255,0,255),color(255,100,255),color(127,0,127));
+        One=new Num_Button(480,500,50,40,color(255,0,255),color(255,100,255),color(127,0,127));
+        Two=new Num_Button(480,545,100,40,color(255,0,255),color(255,100,255),color(127,0,127));
+        Three=new Num_Button(480,590,150,40,color(255,0,255),color(255,100,255),color(127,0,127));
 
         Set_ship();
 
@@ -87,26 +87,28 @@ void draw(){
                         set_display();
                         Select.display(Select.overCircle());
                         Next.display(Next.overCircle());
+                        //                        println(mouseX);
+                        //                        println(mouseY);
                         break;
                 case 2:
                         background(bg);
                         Attack.display(Attack.overCircle());
                         Select.display(Select.overCircle());
 
-                        dirB[0].display(dirB[0].overRect());
-                        dirB[1].display(dirB[1].overRect());
-                        dirB[2].display(dirB[2].overRect());
-                        dirB[3].display(dirB[3].overRect());
+                        Up.display(Up.overRect());
+                        Down.display(Down.overRect());
+                        Right.display(Right.overRect());
+                        Left.display(Left.overRect());
                         fill(0,255,50);
-                        ellipse(dirB[2].x-dirB[0].rect_x/2,dirB[2].y+dirB[0].rect_x/2,dirB[0].rect_x*1.3,dirB[0].rect_x*1.3);
+                        ellipse(Right.x-Up.rect_x/2,Right.y+Up.rect_x/2,Up.rect_x*1.3,Up.rect_x*1.3);
 
-                        numB[0].display(numB[0].overRect());
-                        numB[1].display(numB[1].overRect());
-                        numB[2].display(numB[2].overRect());
+                        One.display(One.overRect());
+                        Two.display(Two.overRect());
+                        Three.display(Three.overRect());
 
-                        ship[0].display(0);
-                        ship[1].display(1);
-                        ship[2].display(2);
+                        Submarine.display(0);
+                        Cruiser.display(1);
+                        Battleship.display(2);
 
                         fill(0,255,0);
                         ellipse(grid_x[tmp_x]+18,grid_y[tmp_y]-17,7,7);
@@ -129,132 +131,134 @@ void mousePressed(){
                 if(phase==1){
                         switch(ship_type){
                                 case 0:
-                                        ship[0].x=tmp_x;
-                                        ship[0].y=tmp_y;
+                                        Submarine.x=tmp_x;
+                                        Submarine.y=tmp_y;
                                         break;
                                 case 1:
-                                        ship[1].x=tmp_x;
-                                        ship[1].y=tmp_y;
+                                        Cruiser.x=tmp_x;
+                                        Cruiser.y=tmp_y;
                                         break;
                                 case 2:
-                                        ship[2].x=tmp_x;
-                                        ship[2].y=tmp_y;
+                                        Battleship.x=tmp_x;
+                                        Battleship.y=tmp_y;
                                         break;
                         }        
                 }else if(phase==2){
                         switch(ship_type){
                                 case 0:
-                                        ship[0].move(direction,n);
+                                        Submarine.move(direction,n);
                                         break;
                                 case 1:
-                                        ship[1].move(direction,n);
+                                        Cruiser.move(direction,n);
                                         break;
                                 case 2:
-                                        ship[2].move(direction,n);
+                                        Battleship.move(direction,n);
                                         break;
                         } 
                 }
         }else if(Attack.overCircle()){
                 switch(ship_type){
                         case 0:
-                                if(ship[0].around(tmp_x,tmp_y)&&n<=ship[0].atk){
-                                        println("ship[0]");
+                                if(Submarine.around(tmp_x,tmp_y)&&n<=Submarine.atk){
+                                        println("Submarine");
                                         OscMessage Attack_msg=new OscMessage("/Check/Attack");
                                         Attack_msg.add(tmp_x);
                                         Attack_msg.add(tmp_y);
-                                        Attack_msg.add(ship[0].atk);
+                                        Attack_msg.add(Submarine.atk);
                                         oscP5.send(Attack_msg,myRemoteLocation);
                                         update();
                                 }
                                 break;
                         case 1:
-                                if(ship[1].around(tmp_x,tmp_y)&&n<=ship[1].atk){
+                                if(Cruiser.around(tmp_x,tmp_y)&&n<=Cruiser.atk){
                                         //Attack
                                         OscMessage Attack_msg=new OscMessage("/Check/Attack");
                                         Attack_msg.add(tmp_x);
                                         Attack_msg.add(tmp_y);
-                                        Attack_msg.add(ship[1].atk);
+                                        Attack_msg.add(Cruiser.atk);
                                         oscP5.send(Attack_msg,myRemoteLocation);
                                         update();
                                 }
                                 break;
                         case 2:
-                                if(ship[2].around(tmp_x,tmp_y)&&n<=ship[2].atk){
+                                if(Battleship.around(tmp_x,tmp_y)&&n<=Battleship.atk){
                                         //Attack
                                         OscMessage Attack_msg=new OscMessage("/Check/Attack");
                                         Attack_msg.add(tmp_x);
                                         Attack_msg.add(tmp_y);
-                                        Attack_msg.add(ship[2].atk);
+                                        Attack_msg.add(Battleship.atk);
                                         oscP5.send(Attack_msg,myRemoteLocation);
                                         update();
                                 }
                                 break;
                 } 
-        }
-  
-        for(int i=0;i<4;i++){
-                if(dirB[i].overRect()){
-                        direction=i;
-                        this_true(direction);
-                        break;
-                }
-        }
-        
-        if(numB[0].overRect()){
+        }else if(Right.overRect()){
+                direction=2;
+                this_true(direction);
+        }else if(Left.overRect()){
+                direction=3;
+                this_true(direction);
+        }else if(Up.overRect()){
+                direction=0;
+                this_true(direction);
+        }else if(Down.overRect()){
+                direction=1;
+                this_true(direction);
+        }else if(One.overRect()){
                 n=1;
-                numB[0].select=true;
-                numB[1].select=false;
-                numB[2].select=false;
-        }else if(numB[1].overRect()){
+                One.select=true;
+                Two.select=false;
+                Three.select=false;
+        }else if(Two.overRect()){
                 n=2;
-                numB[0].select=false;
-                numB[1].select=true;
-                numB[2].select=false;
-        }else if(numB[2].overRect()){
+                Two.select=true;
+                One.select=false;
+                Three.select=false;
+        }else if(Three.overRect()){
                 n=3;
-                numB[0].select=false;
-                numB[1].select=false;
-                numB[2].select=true;
+                Three.select=true;
+                Two.select=false;
+                One.select=false;
         }
 }
 
 public void check_Attack(int x, int y,int atk) {
         println(x+","+y);
         println("atk>>"+atk);
-        if(ship[0].hit(x,y)){
+        if(Submarine.hit(x,y)){
                 OscMessage Return_atk=new OscMessage("/Return/Attack");
-                if(atk<ship[0].HP){
+                if(atk<Submarine.HP){
                         Return_atk.add(2);
                         oscP5.send(Return_atk,myRemoteLocation);
                 }else{
                         Return_atk.add(3);
                         oscP5.send(Return_atk,myRemoteLocation);
-                        ship[0].alive=false;
+                        Submarine.alive=false;
                 }
-                ship[0].HP-=atk;
-        }else if(ship[1].hit(x,y)){
+                Submarine.HP-=atk;
+        }else if(Cruiser.hit(x,y)){
                 OscMessage Return_atk=new OscMessage("/Return/Attack");
-                if(atk<ship[1].HP){
-                                Return_atk.add(2);
-                        oscP5.send(Return_atk,myRemoteLocation);
-                }else{
-                        Return_atk.add(3);
-                        oscP5.send(Return_atk,myRemoteLocation);
-                        ship[1].alive=false;
-                }
-                ship[1].HP-=atk;
-        }else if(ship[2].hit(x,y)){
-                OscMessage Return_atk=new OscMessage("/Return/Attack");
-                if(atk<ship[2].HP){
+                if(atk<Cruiser.HP){
                         Return_atk.add(2);
                         oscP5.send(Return_atk,myRemoteLocation);
                 }else{
                         Return_atk.add(3);
                         oscP5.send(Return_atk,myRemoteLocation);
-                        ship[2].alive=false;
+                        Cruiser.alive=false;
                 }
-                ship[2].HP-=atk;
-        }else if(ship[0].around(x,y)||ship[1].around(x,y)||ship[2].around(x,y)){
+                Cruiser.HP-=atk;
+        }else if(Battleship.hit(x,y)){
+                OscMessage Return_atk=new OscMessage("/Return/Attack");
+                if(atk<Battleship.HP){
+                        Return_atk.add(2);
+                        oscP5.send(Return_atk,myRemoteLocation);
+                }else{
+                        Return_atk.add(3);
+                        oscP5.send(Return_atk,myRemoteLocation);
+                        Battleship.alive=false;
+                }
+                Battleship.HP-=atk;
+        }else if(Submarine.around(x,y)||Cruiser.around(x,y)||Battleship.around(x,y)){
                 OscMessage Return_atk=new OscMessage("/Return/Attack");
                 Return_atk.add(1);
                 oscP5.send(Return_atk,myRemoteLocation);
@@ -280,16 +284,30 @@ void update(){
 }
 
 void this_true(int direction){
-        dirB[0].select=false;
-        dirB[1].select=false;
-        dirB[2].select=false;
-        dirB[3].select=false;
-        dirB[direction].select=true;
+        Right.select=false;
+        Left.select=false;
+        Up.select=false;
+        Down.select=false;
+        switch(direction){
+                case 0:
+                        Up.select=true;
+                        break;
+                case 1:
+                        Down.select=true;
+                        break;
+                case 2:
+                        Right.select=true;
+                        break;
+                case 3:
+                        Left.select=true;
+                        break;
+        }
 }
+
 void set_display(){
-        image(su,155+95*ship[0].x,175+95*ship[0].y);
-        image(cr,155+95*ship[1].x,175+95*ship[1].y);
-        image(ba,155+95*ship[2].x,175+95*ship[2].y);
+        image(su,155+95*Submarine.x,175+95*Submarine.y);
+        image(cr,155+95*Cruiser.x,175+95*Cruiser.y);
+        image(ba,155+95*Battleship.x,175+95*Battleship.y);
 }
 
 void dropdown(int n) {
@@ -312,9 +330,9 @@ void column_list(int p) {
 
 void Set_textbox(){
         tokens = new String[3];
-        tokens[0] = "submarine";
+        tokens[0] = "Submarine";
         tokens[1] = "cruiser";
-        tokens[2] = "battleship";
+        tokens[2] = "Battleship";
 
         List l = Arrays.asList(tokens[0], tokens[1], tokens[2]);
 
@@ -378,9 +396,9 @@ void Set_textarea(){
                 .setColorBackground(color(255,100))
                 .setColorForeground(color(255,100));
         ;
-        myTextarea.setText("Your Battle ship HP:"+ship[2].HP+"\n"
-                        +"Your Cruiser HP:"+ship[1].HP+"\n"
-                        +"Your Submarine HP:"+ship[0].HP
+        myTextarea.setText("Your Battleship HP:"+Battleship.HP+"\n"
+                        +"Your Cruiser HP:"+Cruiser.HP+"\n"
+                        +"Your Submarine HP:"+Submarine.HP
                         );
 
         //-------------------------------------------------------------------
@@ -400,7 +418,7 @@ void Set_textarea(){
 
 void Set_ship(){
         //Ship(x,y,HP,atk,mov);
-        ship[0]=new Ship(1,1,1,1,3);
-        ship[1]=new Ship(3,3,2,2,2);
-        ship[2]=new Ship(2,2,3,3,1);
+        Submarine=new Ship(1,1,1,1,3);
+        Cruiser=new Ship(3,3,2,2,2);
+        Battleship=new Ship(2,2,3,3,1);
 }
