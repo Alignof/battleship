@@ -13,8 +13,8 @@ Textarea myTextarea,Info;
 
 PImage bg,cr,op,se,su,ba;
 
-Direction_Button 	Up,Down,Right,Left;
-Num_Button  		One,Two,Three;
+Direction_Button[]      dirB=new Direction_Button[4];
+Num_Button[]            numB=new Num_Button[3];
 Circle_Button  		Next,Attack,Select;
 Ship    		Submarine,Cruiser,Battleship;
 
@@ -51,14 +51,14 @@ void setup(){
         Attack=new Circle_Button(900,600,100,color(255,0,0),color(255,100,100));
         Select=new Circle_Button(1000,480,100,color(0,255,0),color(100,255,100));
 
-        Up=new Direction_Button(660,350,40,110,color(255,255,0),color(255,255,100),color(127,127,0));
-        Down=new Direction_Button(Up.x , (Up.y + Up.rect_x + Up.rect_y) , Up.rect_x , Up.rect_y ,Up.col_select,Up.col_over,Up.col);
-        Right=new Direction_Button(Up.x+Up.rect_x , Up.y+Up.rect_y , Up.rect_y , Up.rect_x ,Up.col_select,Up.col_over,Up.col);
-        Left=new Direction_Button(Up.x-Up.rect_y , Right.y , Up.rect_y , Up.rect_x ,Up.col_select,Up.col_over,Up.col);
+        dirB[0]=new Direction_Button(660,350,40,110,color(255,255,0),color(255,255,100),color(127,127,0));
+        dirB[1]=new Direction_Button(dirB[0].x , (dirB[0].y + dirB[0].rect_x + dirB[0].rect_y) , dirB[0].rect_x , dirB[0].rect_y ,dirB[0].col_select,dirB[0].col_over,dirB[0].col);
+        dirB[2]=new Direction_Button(dirB[0].x+dirB[0].rect_x , dirB[0].y+dirB[0].rect_y , dirB[0].rect_y , dirB[0].rect_x ,dirB[0].col_select,dirB[0].col_over,dirB[0].col);
+        dirB[3]=new Direction_Button(dirB[0].x-dirB[0].rect_y , dirB[2].y , dirB[0].rect_y , dirB[0].rect_x ,dirB[0].col_select,dirB[0].col_over,dirB[0].col);
 
-        One=new Num_Button(480,500,50,40,color(255,0,255),color(255,100,255),color(127,0,127));
-        Two=new Num_Button(480,545,100,40,color(255,0,255),color(255,100,255),color(127,0,127));
-        Three=new Num_Button(480,590,150,40,color(255,0,255),color(255,100,255),color(127,0,127));
+        numB[0]=new Num_Button(480,500,50,40,color(255,0,255),color(255,100,255),color(127,0,127));
+        numB[1]=new Num_Button(480,545,100,40,color(255,0,255),color(255,100,255),color(127,0,127));
+        numB[2]=new Num_Button(480,590,150,40,color(255,0,255),color(255,100,255),color(127,0,127));
 
         Set_ship();
 
@@ -87,24 +87,22 @@ void draw(){
                         set_display();
                         Select.display(Select.overCircle());
                         Next.display(Next.overCircle());
-                        //                        println(mouseX);
-                        //                        println(mouseY);
                         break;
                 case 2:
                         background(bg);
                         Attack.display(Attack.overCircle());
                         Select.display(Select.overCircle());
 
-                        Up.display(Up.overRect());
-                        Down.display(Down.overRect());
-                        Right.display(Right.overRect());
-                        Left.display(Left.overRect());
+                        dirB[0].display(dirB[0].overRect());
+                        dirB[1].display(dirB[1].overRect());
+                        dirB[2].display(dirB[2].overRect());
+                        dirB[3].display(dirB[3].overRect());
                         fill(0,255,50);
-                        ellipse(Right.x-Up.rect_x/2,Right.y+Up.rect_x/2,Up.rect_x*1.3,Up.rect_x*1.3);
+                        ellipse(dirB[2].x-dirB[0].rect_x/2,dirB[2].y+dirB[0].rect_x/2,dirB[0].rect_x*1.3,dirB[0].rect_x*1.3);
 
-                        One.display(One.overRect());
-                        Two.display(Two.overRect());
-                        Three.display(Three.overRect());
+                        numB[0].display(numB[0].overRect());
+                        numB[1].display(numB[1].overRect());
+                        numB[2].display(numB[2].overRect());
 
                         Submarine.display(0);
                         Cruiser.display(1);
@@ -192,33 +190,31 @@ void mousePressed(){
                                 }
                                 break;
                 } 
-        }else if(Right.overRect()){
-                direction=2;
-                this_true(direction);
-        }else if(Left.overRect()){
-                direction=3;
-                this_true(direction);
-        }else if(Up.overRect()){
-                direction=0;
-                this_true(direction);
-        }else if(Down.overRect()){
-                direction=1;
-                this_true(direction);
-        }else if(One.overRect()){
+        }
+  
+        for(int i=0;i<4;i++){
+                if(dirB[i].overRect()){
+                        direction=i;
+                        this_true(direction);
+                        break;
+                }
+        }
+        
+        if(numB[0].overRect()){
                 n=1;
-                One.select=true;
-                Two.select=false;
-                Three.select=false;
-        }else if(Two.overRect()){
+                numB[0].select=true;
+                numB[1].select=false;
+                numB[2].select=false;
+        }else if(numB[1].overRect()){
                 n=2;
-                Two.select=true;
-                One.select=false;
-                Three.select=false;
-        }else if(Three.overRect()){
+                numB[0].select=false;
+                numB[1].select=true;
+                numB[2].select=false;
+        }else if(numB[2].overRect()){
                 n=3;
-                Three.select=true;
-                Two.select=false;
-                One.select=false;
+                numB[0].select=false;
+                numB[1].select=false;
+                numB[2].select=true;
         }
 }
 
@@ -239,7 +235,7 @@ public void check_Attack(int x, int y,int atk) {
         }else if(Cruiser.hit(x,y)){
                 OscMessage Return_atk=new OscMessage("/Return/Attack");
                 if(atk<Cruiser.HP){
-                        Return_atk.add(2);
+                                Return_atk.add(2);
                         oscP5.send(Return_atk,myRemoteLocation);
                 }else{
                         Return_atk.add(3);
@@ -284,26 +280,12 @@ void update(){
 }
 
 void this_true(int direction){
-        Right.select=false;
-        Left.select=false;
-        Up.select=false;
-        Down.select=false;
-        switch(direction){
-                case 0:
-                        Up.select=true;
-                        break;
-                case 1:
-                        Down.select=true;
-                        break;
-                case 2:
-                        Right.select=true;
-                        break;
-                case 3:
-                        Left.select=true;
-                        break;
-        }
+        dirB[0].select=false;
+        dirB[1].select=false;
+        dirB[2].select=false;
+        dirB[3].select=false;
+        dirB[direction].select=true;
 }
-
 void set_display(){
         image(su,155+95*Submarine.x,175+95*Submarine.y);
         image(cr,155+95*Cruiser.x,175+95*Cruiser.y);
