@@ -113,6 +113,15 @@ void draw(){
 
                         fill(0,255,0);
                         ellipse(grid_x[tmp_x]+18,grid_y[tmp_y]-17,7,7);
+
+                        if(My_turn){
+                                fill(200,200,200);
+                        }else{
+                                fill(60,60,60);
+                        }
+                        
+                        ellipse(505,250,50,50);
+                                
                         break;
         }
 }
