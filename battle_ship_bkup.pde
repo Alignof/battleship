@@ -119,9 +119,9 @@ void draw(){
                         }else{
                                 fill(60,60,60);
                         }
-                        
+
                         ellipse(505,250,50,50);
-                                
+
                         break;
         }
 }
@@ -163,7 +163,7 @@ void mousePressed(){
                         }
                 }
         }
-  
+
         for(int i=0;i<4;i++){
                 if(dirB[i].overRect()){
                         direction=i;
@@ -171,7 +171,7 @@ void mousePressed(){
                         break;
                 }
         }
-        
+
         if(numB[0].overRect()){
                 n=1;
                 numB[0].select=true;
@@ -193,7 +193,7 @@ void mousePressed(){
 public void check_Attack(int x, int y,int atk) {
         println(x+","+y);
         println("atk>>"+atk);
-        
+
         for(int i=0;i<3;i++){
                 if(ship[i].hit(x,y)){
                         OscMessage Return_atk=new OscMessage("/Return/Attack");
@@ -224,7 +224,7 @@ public void check_Attack(int x, int y,int atk) {
 
 public void disp_Result(int result){
         println(result_word[result]);
-        log_area.append("[Your] "+rows[tmp_x]+columns[tmp_y]+" atk:"+"n"+"---->"+result_word[result]+"\n");
+        log_area.append("[Your] "+rows[tmp_x]+"-"+columns[tmp_y]+" atk:"+n+" ----> "+result_word[result]+"\n");
 }
 
 public void turn_check(){
@@ -241,13 +241,20 @@ public void check_Move(int type,int direction){
         log_area.append("[Rival] "+tokens[type]+">>"+direction_word[direction]+"\n");
 }
 
+void move_data(int type,direction){
+        OscMessage Move_data=new OscMessage("/Check/Move");
+        Move_data.add(type);
+        Move_data.add(direction);
+        oscP5.send(Move_data,myRemoteLocation);
+}
+
 void update(){
         Turn++;
         Info.setText("Turn:"+Turn+"\n");
         Info.append("Your Battle ship HP:"+ship[2].HP+"\n"
                         +"Your Cruiser HP:"+ship[1].HP+"\n"
                         +"Your Submarine HP:"+ship[0].HP
-                        );
+                   );
         OscMessage Your_turn=new OscMessage("/Turn/your");
         oscP5.send(Your_turn,myRemoteLocation);
         My_turn=false;
@@ -370,7 +377,7 @@ void Set_textarea(){
         Info.append("Your Battle ship HP:"+ship[2].HP+"\n"
                         +"Your Cruiser HP:"+ship[1].HP+"\n"
                         +"Your Submarine HP:"+ship[0].HP
-                        );
+                   );
 }
 
 void Set_ship(){
