@@ -28,7 +28,7 @@ int tmp_x;
 int tmp_y;
 int Turn=0;
 int phase=0;
-int myCurrentIndex = 0;
+int myCurrentIndex=0;
 String[] tokens;
 String[] rows;
 String[] columns;
@@ -240,6 +240,10 @@ public void check_Move(int type,int direction){
 void update(){
         Turn++;
         Info.setText("Turn:"+Turn+"\n");
+        Info.append("Your Battle ship HP:"+ship[2].HP+"\n"
+                        +"Your Cruiser HP:"+ship[1].HP+"\n"
+                        +"Your Submarine HP:"+ship[0].HP
+                        );
         OscMessage Your_turn=new OscMessage("/Turn/your");
         oscP5.send(Your_turn,myRemoteLocation);
         My_turn=false;
@@ -344,24 +348,25 @@ void Set_textarea(){
                 .setColorBackground(color(255,100))
                 .setColorForeground(color(255,100));
         ;
-        myTextarea.setText("Your Battle ship HP:"+ship[2].HP+"\n"
-                        +"Your Cruiser HP:"+ship[1].HP+"\n"
-                        +"Your Submarine HP:"+ship[0].HP
-                        );
+        myTextarea.setText("Attack log\n");
 
         //-------------------------------------------------------------------
 
         Info = cp5.addTextarea("txt_Info")
                 .setPosition(10,450)
                 .setSize(450,200)
-                .setFont(createFont("arial",18))
-                .setLineHeight(20)
-                .setColor(color(255,100,100))
+                .setFont(createFont("arial",22))
+                .setLineHeight(25)
+                .setColor(color(100,255,255))
                 .setColorBackground(color(255,100))
                 .setColorForeground(color(255,100));
         ;
 
         Info.setText("Turn:"+Turn+"\n");
+        Info.append("Your Battle ship HP:"+ship[2].HP+"\n"
+                        +"Your Cruiser HP:"+ship[1].HP+"\n"
+                        +"Your Submarine HP:"+ship[0].HP
+                        );
 }
 
 void Set_ship(){
