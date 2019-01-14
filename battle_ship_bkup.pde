@@ -9,7 +9,7 @@ import java.util.*;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 ControlP5 cp5,Textbox,Row,Column;
-Textarea myTextarea,Info;
+Textarea log_area,Info;
 
 PImage bg,cr,op,se,su,ba;
 
@@ -206,8 +206,10 @@ public void check_Attack(int x, int y,int atk) {
                                 ship[i].alive=false;
                         }
                         ship[i].HP-=atk;
+                        return;
                 }
         }
+
         if(ship[0].around(x,y)||ship[1].around(x,y)||ship[2].around(x,y)){
                 OscMessage Return_atk=new OscMessage("/Return/Attack");
                 Return_atk.add(1);
@@ -222,6 +224,7 @@ public void check_Attack(int x, int y,int atk) {
 
 public void disp_Result(int result){
         println(result_word[result]);
+        log_area.append("[Your] "+rows[tmp_x]+columns[tmp_y]+" atk:"+"n"+"---->"+result_word[result]+"\n");
 }
 
 public void turn_check(){
@@ -235,6 +238,7 @@ public void set_turn(){
 
 public void check_Move(int type,int direction){
         println(tokens[type]+">>"+direction_word[direction]);
+        log_area.append("[Rival] "+tokens[type]+">>"+direction_word[direction]+"\n");
 }
 
 void update(){
@@ -339,7 +343,7 @@ void Set_textbox(){
 
 void Set_textarea(){
 
-        myTextarea = cp5.addTextarea("txt")
+        log_area = cp5.addTextarea("txt")
                 .setPosition(500,10)
                 .setSize(700,200)
                 .setFont(createFont("arial",22))
@@ -348,7 +352,7 @@ void Set_textarea(){
                 .setColorBackground(color(255,100))
                 .setColorForeground(color(255,100));
         ;
-        myTextarea.setText("Attack log\n");
+        log_area.setText("Attack log\n");
 
         //-------------------------------------------------------------------
 
