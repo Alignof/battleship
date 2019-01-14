@@ -19,6 +19,7 @@ Ship[]                  ship=new Ship[3];
 Circle_Button  		Next,Attack,Select;
 
 boolean My_turn;
+boolean Is_first=true;
 int[] grid_x={145,215,285,355,425};
 int[] grid_y={118,188,258,328,398};
 int ship_type;
@@ -26,7 +27,7 @@ int direction;
 int n;
 int tmp_x;
 int tmp_y;
-int Turn=0;
+int Turn=1;
 int phase=0;
 int myCurrentIndex=0;
 String[] tokens;
@@ -48,6 +49,7 @@ void setup(){
         oscP5.plug(this,"disp_Result","/Return/Attack");
         oscP5.plug(this,"set_turn","/Turn/first");
         oscP5.plug(this,"turn_check","/Turn/your");
+        oscP5.plug(this,"end_turn","/Turn/end");
         myRemoteLocation = new NetAddress("127.0.0.1", 4321);//IPaddress
 
         Next=new Circle_Button(1000,600,100,color(255,255,0),color(255,255,100));
@@ -129,10 +131,11 @@ void draw(){
 void mousePressed(){
         if(Next.overCircle()){
                 if(phase==0){
-                        if(Turn==0){
+                        if(Is_first){
                                 OscMessage Im_first=new OscMessage("/Turn/first");
                                 oscP5.send(Im_first,myRemoteLocation);
                                 My_turn=true;
+                                Is_first=true;
                         }
                         Set_textbox();
                 }
@@ -193,30 +196,35 @@ void mousePressed(){
 public void check_Attack(int x, int y,int atk) {
         println(x+","+y);
         println("atk>>"+atk);
-        log_area.append("[Rival] "+rows[x]+"-"+columns[y]+" atk:"+atk+"\n");
+        log_area.append("[Rival] "+rows[y]+"-"+columns[x]+" atk:"+atk+"\n");
 
         for(int i=0;i<3;i++){
                 if(ship[i].hit(x,y)){
                         OscMessage Return_atk=new OscMessage("/Return/Attack");
                         if(atk<ship[i].HP){
+                                //hit
                                 Return_atk.add(2);
                                 oscP5.send(Return_atk,myRemoteLocation);
+                                ship[i].HP-=atk;
                         }else{
+                                //sink
                                 Return_atk.add(3);
                                 oscP5.send(Return_atk,myRemoteLocation);
                                 ship[i].alive=false;
+                                ship[i].HP=0;
                         }
-                        ship[i].HP-=atk;
                         return;
                 }
         }
 
         if(ship[0].around(x,y)||ship[1].around(x,y)||ship[2].around(x,y)){
                 OscMessage Return_atk=new OscMessage("/Return/Attack");
+                //spray
                 Return_atk.add(1);
                 oscP5.send(Return_atk,myRemoteLocation);
         }else{
                 OscMessage Return_atk=new OscMessage("/Return/Attack");
+                //nothing
                 Return_atk.add(0);
                 oscP5.send(Return_atk,myRemoteLocation);
 
@@ -225,16 +233,26 @@ public void check_Attack(int x, int y,int atk) {
 
 public void disp_Result(int result){
         println(result_word[result]);
-        log_area.append("[Your] "+rows[tmp_x]+"-"+columns[tmp_y]+" atk:"+n+" ----> "+result_word[result]+"\n");
+        log_area.append("[Your] "+rows[tmp_y]+"-"+columns[tmp_x]+" atk:"+n+" ----> "+result_word[result]+"\n");
 }
 
 public void turn_check(){
         My_turn=true;
 }
 
+public void end_turn(){
+        //first player turn ++
+        Turn++;
+        Info.setText("Turn:"+Turn+"\n");
+        Info.append("Your Battle ship HP:"+ship[2].HP+"\n"
+                        +"Your Cruiser HP:"+ship[1].HP+"\n"
+                        +"Your Submarine HP:"+ship[0].HP
+                   );
+}
+
 public void set_turn(){
         My_turn=false;
-        Turn=1;
+        Is_first=false;
 }
 
 public void check_Move(int type,int direction){
@@ -252,12 +270,16 @@ void move_data(int type,int direction){
 }
 
 void update(){
-        Turn++;
-        Info.setText("Turn:"+Turn+"\n");
-        Info.append("Your Battle ship HP:"+ship[2].HP+"\n"
-                        +"Your Cruiser HP:"+ship[1].HP+"\n"
-                        +"Your Submarine HP:"+ship[0].HP
-                   );
+        if(!(Is_first)){
+                Turn++;
+                OscMessage Turn_end=new OscMessage("/Turn/end");
+                oscP5.send(Turn_end,myRemoteLocation);
+                Info.setText("Turn:"+Turn+"\n");
+                Info.append("Your Battle ship HP:"+ship[2].HP+"\n"
+                                +"Your Cruiser HP:"+ship[1].HP+"\n"
+                                +"Your Submarine HP:"+ship[0].HP
+                           );
+        }
         OscMessage Your_turn=new OscMessage("/Turn/your");
         oscP5.send(Your_turn,myRemoteLocation);
         My_turn=false;
