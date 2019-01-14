@@ -193,6 +193,7 @@ void mousePressed(){
 public void check_Attack(int x, int y,int atk) {
         println(x+","+y);
         println("atk>>"+atk);
+        log_area.append("[Rival] "+rows[x]+"-"+columns[y]+" atk:"+atk+"\n");
 
         for(int i=0;i<3;i++){
                 if(ship[i].hit(x,y)){
@@ -241,7 +242,9 @@ public void check_Move(int type,int direction){
         log_area.append("[Rival] "+tokens[type]+">>"+direction_word[direction]+"\n");
 }
 
-void move_data(int type,direction){
+void move_data(int type,int direction){
+        log_area.append("[Your] "+tokens[type]+">>"+n+direction_word[direction]+"\n");
+        println("move_data");
         OscMessage Move_data=new OscMessage("/Check/Move");
         Move_data.add(type);
         Move_data.add(direction);
