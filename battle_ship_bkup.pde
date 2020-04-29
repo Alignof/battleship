@@ -8,10 +8,10 @@ import java.util.*;
 
 OscP5 oscP5;
 NetAddress myRemoteLocation;
-ControlP5 cp5,Textbox,Row,Column;
+ControlP5 cp5,Type,Rows,Columns;
 Textarea log_area,Info;
 
-PImage bg,cr,op,se,su,ba;
+PImage bg,cr,op,se,su,ba,result;
 
 Direction_Button[]      dirB=new Direction_Button[4];
 Num_Button[]            numB=new Num_Button[3];
@@ -69,10 +69,10 @@ void setup(){
         Set_ship();
 
         cp5 = new ControlP5(this);
-        Textbox = new ControlP5(this);
-        Row = new ControlP5(this);
-        Column = new ControlP5(this);
-
+        Type = new ControlP5(this);
+        Rows = new ControlP5(this);
+        Columns = new ControlP5(this);
+        
         bg=loadImage("background_resize.png");
         op=loadImage("opening_resize.png");
         se=loadImage("set_battleship_resize.png");
@@ -87,16 +87,19 @@ void setup(){
 void draw(){
         switch(phase){
                 case 0:
+                        //opening
                         background(op);
                         Next.display(Next.overCircle());
                         break;
                 case 1: 
+                        //set ship
                         background(se);
-                        set_display();
+                        put_ship();
                         Select.display(Select.overCircle());
                         Next.display(Next.overCircle());
                         break;
                 case 2:
+                        //battle
                         background(bg);
                         Attack.display(Attack.overCircle());
                         Select.display(Select.overCircle());
@@ -128,24 +131,34 @@ void draw(){
                         ellipse(505,250,50,50);
 
                         break;
+                case 3:
+                        //result
+                        background(result);
+                        Next.display(Select.overCircle());
+                        
+
         }
 }
 
 void mousePressed(){
         if(Next.overCircle()){
-                if(phase==0){
-                        if(Is_first){
-                                OscMessage Im_first=new OscMessage("/Turn/first");
-                                oscP5.send(Im_first,myRemoteLocation);
-                                My_turn=true;
-                                Is_first=true;
-                        }
-                        Set_textbox();
-                }
-                if(phase==1){
-                        Set_textarea();
-                        Select.y=600;
-                        Select.x=1075;
+                switch(phase){
+                        case 0:
+                                if(Is_first){
+                                        OscMessage Im_first=new OscMessage("/Turn/first");
+                                        oscP5.send(Im_first,myRemoteLocation);
+                                        My_turn=true;
+                                        Is_first=true;
+                                }
+                                Set_textbox();
+                                break;
+                        case 1:        
+                                Select.y=600;
+                                Select.x=1075;
+                                Set_textarea();
+                                break;
+                        case 3:
+                                exit();
                 }
                 phase++;
         }else if(Select.overCircle()){
@@ -215,7 +228,20 @@ public void check_Attack(int x, int y,int atk) {
                                 oscP5.send(Return_atk,myRemoteLocation);
                                 ship[i].alive=false;
                                 ship[i].HP=0;
+
+                                if(ship[0].HP==0&&ship[1].HP==0&&ship[2].HP==0){
+                                        log_area.append("<<<You lose>>>");
+                                        delay(3000);
+                                        
+                                        OscMessage Give_up=new OscMessage("/Turn/give_up");
+                                        oscP5.send(Give_up,myRemoteLocation);
+
+                                        set_result();
+                                        result=loadImage("lose.png");
+                                        phase++;
+                                }
                         }
+                        HP_update();
                         return;
                 }
         }
@@ -243,14 +269,18 @@ public void turn_check(){
         My_turn=true;
 }
 
+public void give_up(){
+        log_area.append("<<<You win>>>");
+        delay(3000);
+        result=loadImage("win.png");
+        set_result();
+        phase++;
+}
+
 public void end_turn(){
         //first player turn ++
         Turn++;
-        Info.setText("Turn:"+Turn+"\n");
-        Info.append("Your Battle ship HP:"+ship[2].HP+"\n"
-                        +"Your Cruiser HP:"+ship[1].HP+"\n"
-                        +"Your Submarine HP:"+ship[0].HP
-                   );
+        HP_update();
 }
 
 public void set_turn(){
@@ -277,12 +307,9 @@ void update(){
                 Turn++;
                 OscMessage Turn_end=new OscMessage("/Turn/end");
                 oscP5.send(Turn_end,myRemoteLocation);
-                Info.setText("Turn:"+Turn+"\n");
-                Info.append("Your Battle ship HP:"+ship[2].HP+"\n"
-                                +"Your Cruiser HP:"+ship[1].HP+"\n"
-                                +"Your Submarine HP:"+ship[0].HP
-                           );
+                HP_update();
         }
+        
         OscMessage Your_turn=new OscMessage("/Turn/your");
         oscP5.send(Your_turn,myRemoteLocation);
         My_turn=false;
@@ -295,14 +322,33 @@ void this_true(int direction){
         dirB[3].select=false;
         dirB[direction].select=true;
 }
-void set_display(){
+
+void put_ship(){
         image(su,155+95*ship[0].x,175+95*ship[0].y);
         image(cr,155+95*ship[1].x,175+95*ship[1].y);
         image(ba,155+95*ship[2].x,175+95*ship[2].y);
 }
+
 void Set_ship(){
         //Ship(x,y,HP,atk,mov);
         ship[0]=new Ship(1,1,1,1,3);
         ship[1]=new Ship(3,3,2,2,2);
         ship[2]=new Ship(2,2,3,3,1);
+}
+
+void set_result(){
+        HP_update();
+        log_area.setPosition(500,300);                                        
+        Info.setPosition(10,300);    
+        Type.hide();
+        Rows.hide();
+        Columns.hide();
+}
+
+void HP_update(){
+        Info.setText("Turn:"+Turn+"\n");
+        Info.append("Your Battle ship HP:"+ship[2].HP+"\n"
+                        +"Your Cruiser HP:"+ship[1].HP+"\n"
+                        +"Your Submarine HP:"+ship[0].HP
+                   );
 }

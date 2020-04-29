@@ -24,8 +24,8 @@ void Set_textbox(){
 
         List l = Arrays.asList(tokens[0], tokens[1], tokens[2]);
 
-        Textbox.addScrollableList("dropdown")
-                .setPosition(550, 210)
+        Type.addScrollableList("dropdown")
+                .setPosition(600, 210)
                 .setFont(createFont("arial",18))
                 .setSize(250, 200)
                 .setBarHeight(35)
@@ -43,8 +43,8 @@ void Set_textbox(){
 
         List m = Arrays.asList(rows[0], rows[1], rows[2], rows[3], rows[4]);
 
-        Textbox.addScrollableList("row_list")
-                .setPosition(820, 210)
+        Rows.addScrollableList("row_list")
+                .setPosition(860, 210)
                 .setFont(createFont("arial",18))
                 .setSize(150, 400)
                 .setBarHeight(35)
@@ -62,8 +62,8 @@ void Set_textbox(){
 
         List n = Arrays.asList(columns[0], columns[1], columns[2], columns[3], columns[4]);
 
-        Textbox.addScrollableList("column_list")
-                .setPosition(990, 210)
+        Columns.addScrollableList("column_list")
+                .setPosition(1020, 210)
                 .setFont(createFont("arial",18))
                 .setSize(150, 400)
                 .setBarHeight(35)

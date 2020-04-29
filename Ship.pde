@@ -34,19 +34,19 @@ class Ship{
                         switch(direction){
                                 //up
                                 case 0: 
-                                        if(y-n>=0&&n<=mov){y-=n;update();}
+                                        if(y-n>=0&&n<=mov){y-=n;update();move_data(ship_type,direction);}
                                         break;
                                         //down
                                 case 1:
-                                        if(y+n<5&&n<=mov){y+=n;update();}
+                                        if(y+n<5&&n<=mov){y+=n;update();move_data(ship_type,direction);}
                                         break;
                                         //right
                                 case 2:
-                                        if(x+n<5&&n<=mov){x+=n;update();}
+                                        if(x+n<5&&n<=mov){x+=n;update();move_data(ship_type,direction);}
                                         break;
                                         //left
                                 case 3:
-                                        if(x-n>=0&&n<=mov){x-=n;update();}
+                                        if(x-n>=0&&n<=mov){x-=n;update();move_data(ship_type,direction);}
                                         break;
                         }
                 }
